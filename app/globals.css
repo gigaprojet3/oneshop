@@ -1,26 +1,75 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * OneShop : tokens de design
+ * Baobab (vert profond) porte la marque ; Karité (ocre) signale l'argent ;
+ * Kola (rouge) les refus ; Indigo les colis en route.
+ */
+@theme {
+  --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
+
+  --color-paper: #f6f8f6;
+  --color-surface: #ffffff;
+  --color-ink: #16241f;
+  --color-ink-soft: #4a5a54;
+  --color-ink-faint: #7d8b86;
+  --color-line: #dfe5e2;
+  --color-line-strong: #c5cfcb;
+
+  --color-baobab-50: #e8f3ee;
+  --color-baobab-100: #cfe6dc;
+  --color-baobab-300: #6fb497;
+  --color-baobab-500: #16805f;
+  --color-baobab-700: #0b5d45;
+  --color-baobab-900: #073a2c;
+
+  --color-karite-50: #fcf4e2;
+  --color-karite-100: #f8e6bb;
+  --color-karite-400: #e2a42b;
+  --color-karite-700: #8f5f0c;
+
+  --color-kola-50: #fbeceb;
+  --color-kola-500: #b8382b;
+  --color-kola-700: #8c2519;
+
+  --color-indigo-50: #ebeef8;
+  --color-indigo-500: #2c3e7a;
+
+  --radius-control: 0.5rem;
+  --radius-panel: 0.875rem;
+
+  --text-display: 3.75rem;
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.035em;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-feature-settings: "ss01";
+  }
+  ::selection {
+    background: var(--color-karite-100);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-baobab-500);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

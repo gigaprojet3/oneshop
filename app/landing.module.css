@@ -1,0 +1,56 @@
+/*
+ * Le seul mouvement automatique du site : à l'ouverture, la commande
+ * avance d'une étape à l'autre jusqu'à l'encaissement.
+ */
+.step {
+  animation: step-in 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i) * 550ms + 250ms);
+}
+
+.dot {
+  animation: dot-pop 360ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  animation-delay: calc(var(--i) * 550ms + 330ms);
+}
+
+.rail {
+  transform-origin: top;
+  animation: rail-grow 450ms ease-out both;
+  animation-delay: calc(var(--i) * 550ms + 520ms);
+}
+
+@keyframes step-in {
+  from {
+    opacity: 0.25;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dot-pop {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes rail-grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step,
+  .dot,
+  .rail {
+    animation: none;
+  }
+}
