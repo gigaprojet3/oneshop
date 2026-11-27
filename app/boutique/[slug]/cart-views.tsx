@@ -9,6 +9,7 @@ import { Alert, Field, Input, Textarea, buttonClass } from "@/components/ui";
 import { placeOrder } from "@/lib/actions/storefront";
 import { useCart } from "@/lib/cart";
 import { fcfa } from "@/lib/format";
+import { storePath } from "@/lib/store-url";
 
 export type CartProduct = { id: string; name: string; price: number; stock: number; image: string | null };
 
@@ -48,7 +49,7 @@ function EmptyCart({ slug }: { slug: string }) {
   return (
     <div className="py-16 text-center">
       <p className="text-lg font-semibold">Votre panier est vide</p>
-      <Link href={`/boutique/${slug}`} className={buttonClass("primary", "md", "mt-6 rounded-full")}>
+      <Link href={storePath(slug)} className={buttonClass("primary", "md", "mt-6 rounded-full")}>
         Voir les produits
       </Link>
     </div>
@@ -81,7 +82,7 @@ export function CartView({ slug, products, deliveryFee }: { slug: string; produc
               </span>
               <div className="flex min-w-0 flex-1 flex-col gap-2">
                 <div className="flex justify-between gap-4">
-                  <Link href={`/boutique/${slug}/produits/${product.id}`} className="font-semibold hover:underline">
+                  <Link href={storePath(slug, `/produits/${product.id}`)} className="font-semibold hover:underline">
                     {product.name}
                   </Link>
                   <span className="tabular shrink-0 font-semibold">{fcfa(product.price * quantity)}</span>
@@ -131,7 +132,7 @@ export function CartView({ slug, products, deliveryFee }: { slug: string; produc
         {overStock ? (
           <p className="mt-5 text-sm font-semibold text-kola-700">Ajustez les quantités en rouge pour continuer.</p>
         ) : (
-          <Link href={`/boutique/${slug}/commande`} className={buttonClass("primary", "lg", "mt-6 w-full rounded-full")}>
+          <Link href={storePath(slug, "/commande")} className={buttonClass("primary", "lg", "mt-6 w-full rounded-full")}>
             Commander
           </Link>
         )}

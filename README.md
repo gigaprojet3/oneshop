@@ -10,8 +10,12 @@ Contenu de cette version :
   **3 jours d'essai gratuit sur le plan Business**. Il n'y a pas de plan gratuit.
 - **Abonnements** Basic, Pro et Business, payés par carte, en FCFA. Le commerçant peut changer de plan, remplacer
   sa carte ou arrêter l'abonnement. En cas d'échec de paiement, sa boutique se ferme aux clients jusqu'au règlement.
-- **Boutique en ligne publique** (`/boutique/[adresse]`) : catalogue, fiche produit, panier, commande avec
+- **Boutique en ligne publique**, sur son propre sous-domaine (`chez-awa.oneshop.com`) : catalogue, fiche produit, panier, commande avec
   paiement à la livraison, page de confirmation qui suit l'avancement de la commande.
+- **Modèles de boutique** (Tableau de bord > Apparence) : deux modèles, Impact (énergique, pour vendre vite depuis
+  les publicités) et Écrin (raffiné, pour la beauté, la mode, les bijoux). Couleur, police, fond, forme des boutons
+  et bandeau d'annonce réglables ; la page d'accueil se compose de sections à ajouter, réordonner, masquer et
+  modifier, avec un aperçu en direct sur ordinateur et mobile. Les produits peuvent avoir un prix barré.
 - **Tableau de bord du commerçant** :
   - accueil : parcours des commandes (à confirmer, confirmée, en livraison, livrée et payée), argent encaissé, taux de refus ;
   - commandes : celles de la boutique en ligne arrivent automatiquement, et une commande prise par téléphone peut
@@ -35,7 +39,8 @@ Contenu de cette version :
 1. **Créez un projet Supabase** sur [supabase.com](https://supabase.com).
 2. **Créez la base** : dans Supabase > SQL Editor, exécutez dans l'ordre
    [0001_init.sql](supabase/migrations/0001_init.sql) puis
-   [0002_abonnements_vitrine.sql](supabase/migrations/0002_abonnements_vitrine.sql).
+   [0002_abonnements_vitrine.sql](supabase/migrations/0002_abonnements_vitrine.sql), puis
+   [0003_themes.sql](supabase/migrations/0003_themes.sql).
 3. **Configurez l'application** :
    ```bash
    cp .env.example .env.local
@@ -54,6 +59,21 @@ Contenu de cette version :
 > Pour tester sans recevoir d'email, désactivez « Confirm email » dans Supabase > Authentication > Providers > Email :
 > l'inscription mène alors directement à la création de la boutique.
 
+## Sous-domaines des boutiques
+
+Avec `NEXT_PUBLIC_ROOT_DOMAIN`, chaque boutique est servie sur `<adresse>.<domaine>`. Le proxy
+([proxy.ts](proxy.ts)) réécrit ces requêtes vers `app/boutique/[slug]/` sans changer l'adresse affichée, et redirige
+les anciens liens `/boutique/<adresse>` vers le sous-domaine. Sans la variable, les boutiques restent sous
+`/boutique/<adresse>`.
+
+- **En local** : `NEXT_PUBLIC_ROOT_DOMAIN=localhost:3000`, puis ouvrez `http://<adresse>.localhost:3000`.
+  Chrome, Edge et Firefox résolvent `*.localhost` sans configuration.
+- **En production** (ex. `oneshop.com`) : `NEXT_PUBLIC_ROOT_DOMAIN=oneshop.com`, et faites pointer le domaine **et**
+  le joker `*.oneshop.com` vers l'hébergement. Sur Vercel, ajoutez les deux domaines au projet ; le joker demande
+  d'utiliser les serveurs DNS de Vercel, qui délivrent alors le certificat HTTPS de chaque sous-domaine.
+- Certains sous-domaines (`www`, `app`, `api`, `admin`…) sont réservés au site : la liste est dans
+  [lib/store-url.ts](lib/store-url.ts).
+
 ## Organisation du code
 
 | Dossier | Rôle |
@@ -68,7 +88,10 @@ Contenu de cette version :
 | `lib/actions/` | Server Actions : écritures, chacune revérifie la session |
 | `lib/billing/` | Cartes, prestataire de paiement (simulé), cycle de vie des abonnements |
 | `lib/domain.ts` | Pays, statuts de commande, plans et durée d'essai |
-| `proxy.ts` | Rafraîchissement de la session et redirections |
+| `lib/theme/` | Modèles, sections et leurs réglages (`schema.ts`), couleurs et polices d'une boutique |
+| `components/storefront/` | Cadre et sections de la boutique, partagés par la boutique et l'aperçu de l'éditeur |
+| `lib/store-url.ts` | Adresses des boutiques (sous-domaine ou `/boutique/[slug]`) |
+| `proxy.ts` | Sous-domaines des boutiques, rafraîchissement de la session et redirections |
 | `supabase/migrations/` | Schéma SQL, règles RLS, fonctions de commande et de boutique publique |
 
 ## Règles métier

@@ -5,6 +5,7 @@ import { updateTag } from "next/cache";
 import { storefrontTag } from "@/lib/storefront";
 import { createPublicClient } from "@/lib/supabase/public";
 import type { FormState } from "@/lib/types";
+import { storePath } from "@/lib/store-url";
 
 function str(form: FormData, key: string, max = 200) {
   return String(form.get(key) ?? "").trim().slice(0, max);
@@ -69,5 +70,5 @@ export async function placeOrder(slug: string, _prev: FormState, form: FormData)
   }
 
   updateTag(storefrontTag(slug)); // le stock affiché a changé
-  redirect(`/boutique/${slug}/commande/${data as string}`);
+  redirect(storePath(slug, `/commande/${data as string}`));
 }

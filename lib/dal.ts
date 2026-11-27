@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { hasAccess, syncSubscription } from "./billing/subscriptions";
+import { requestTime } from "./clock";
 import { createClient } from "./supabase/server";
 import type { Order, OrderWithItems, Product, Shop, Subscription } from "./types";
 
@@ -125,7 +126,7 @@ export async function getOrder(id: string) {
 export async function recentOrderStats() {
   const shop = await getCurrentShop();
   const supabase = await createClient();
-  const since = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+  const since = new Date((await requestTime()) - 30 * 24 * 3600 * 1000).toISOString();
   const { data, error } = await supabase
     .from("orders")
     .select("id, number, status, total, customer_name, customer_phone, city, district, created_at, updated_at, source")

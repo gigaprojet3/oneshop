@@ -8,7 +8,9 @@ import { Skeleton } from "@/components/ui";
 import { fcfa } from "@/lib/format";
 import { getStorefront } from "@/lib/storefront";
 import { productImageUrl } from "@/lib/supabase/env";
-import { AddToCart } from "../../store-ui";
+import { savingsPercent } from "@/components/storefront/sections";
+import { AddToCart } from "@/components/storefront/store-ui";
+import { storePath } from "@/lib/store-url";
 
 type Params = PageProps<"/boutique/[slug]/produits/[id]">["params"];
 
@@ -48,11 +50,12 @@ async function Product({ params }: { params: Params }) {
   if (!data) notFound();
   const { slug, shop, product } = data;
   const src = productImageUrl(product.image_path);
+  const off = savingsPercent(product);
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-8 sm:py-12">
       <Link
-        href={`/boutique/${slug}`}
+        href={storePath(slug)}
         className="mb-6 -ml-1 inline-flex items-center gap-1 rounded-md px-1 text-sm font-semibold text-ink-soft hover:text-ink"
       >
         <ChevronLeftIcon className="size-4" />
@@ -67,8 +70,19 @@ async function Product({ params }: { params: Params }) {
           )}
         </div>
         <div className="md:pt-4">
-          <h1 className="text-3xl font-extrabold leading-tight tracking-[-0.03em] sm:text-4xl">{product.name}</h1>
-          <p className="tabular mt-3 text-2xl font-semibold">{fcfa(product.price)}</p>
+          <h1 className="s-display text-3xl leading-tight tracking-[-0.02em] sm:text-[2.6rem]">{product.name}</h1>
+          <p className="tabular mt-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="text-2xl font-bold">{fcfa(product.price)}</span>
+            {off > 0 && product.compare_at_price ? (
+              <>
+                <span className="text-lg text-ink-soft line-through">
+                  <span className="sr-only">Au lieu de </span>
+                  {fcfa(product.compare_at_price)}
+                </span>
+                <span className="rounded-full bg-baobab-700 px-2.5 py-0.5 text-sm font-bold text-white">−{off} %</span>
+              </>
+            ) : null}
+          </p>
           <p className={`mt-2 text-sm font-semibold ${product.stock === 0 ? "text-kola-700" : product.stock <= 3 ? "text-karite-700" : "text-baobab-700"}`}>
             {product.stock === 0
               ? "Épuisé"

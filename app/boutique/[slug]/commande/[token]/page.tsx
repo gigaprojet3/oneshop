@@ -7,7 +7,8 @@ import { Skeleton, StatusBadge, buttonClass } from "@/components/ui";
 import type { OrderStatus } from "@/lib/domain";
 import { fcfa, orderRef } from "@/lib/format";
 import { createPublicClient } from "@/lib/supabase/public";
-import { ClearCart } from "../../store-ui";
+import { ClearCart } from "@/components/storefront/store-ui";
+import { storePath } from "@/lib/store-url";
 
 export const metadata: Metadata = { title: "Commande confirmée", robots: { index: false } };
 
@@ -96,7 +97,7 @@ async function Confirmation({ params }: { params: Promise<{ slug: string; token:
         </a>
         . Gardez cette page : elle affiche l&apos;avancement de votre commande.
       </p>
-      <Link href={`/boutique/${slug}`} className={buttonClass("secondary", "md", "mt-8 rounded-full")}>
+      <Link href={storePath(slug)} className={buttonClass("secondary", "md", "mt-8 rounded-full")}>
         Continuer mes achats
       </Link>
     </>

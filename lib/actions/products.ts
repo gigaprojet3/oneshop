@@ -25,17 +25,21 @@ function readProductFields(form: FormData) {
     name: str(form, "name"),
     description: str(form, "description"),
     price: str(form, "price").replace(/\s/g, ""),
+    compare_at_price: str(form, "compare_at_price").replace(/\s/g, ""),
     stock: str(form, "stock"),
     is_active: form.get("is_active") === "on" ? "on" : "",
   };
   const price = Number(fields.price);
   const stock = Number(fields.stock || 0);
+  const compareAt = fields.compare_at_price ? Number(fields.compare_at_price) : null;
 
   let error: string | undefined;
   if (fields.name.length < 2) error = "Donnez un nom au produit.";
   else if (!fields.price || !Number.isInteger(price) || price < 0)
     error = "Le prix doit être un montant entier en FCFA, par exemple 12500.";
   else if (!Number.isInteger(stock) || stock < 0) error = "Le stock doit être un nombre entier.";
+  else if (compareAt !== null && (!Number.isInteger(compareAt) || compareAt <= price))
+    error = "Le prix barré doit être un montant entier, plus élevé que le prix de vente.";
 
   const image = form.get("image");
   const file = image instanceof File && image.size > 0 ? image : null;
@@ -52,6 +56,7 @@ function readProductFields(form: FormData) {
       name: fields.name,
       description: fields.description || null,
       price,
+      compare_at_price: compareAt,
       stock,
       is_active: fields.is_active === "on",
     },

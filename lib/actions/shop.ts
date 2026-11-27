@@ -5,6 +5,7 @@ import { refresh, updateTag } from "next/cache";
 import { findCountry } from "@/lib/domain";
 import { getCurrentShop, getCurrentUser, findCurrentShop } from "@/lib/dal";
 import { slugify } from "@/lib/format";
+import { isReservedSlug } from "@/lib/store-url";
 import { storefrontTag } from "@/lib/storefront";
 import { createClient } from "@/lib/supabase/server";
 import type { FormState } from "@/lib/types";
@@ -32,6 +33,7 @@ function readShopFields(form: FormData) {
   let error: string | undefined;
   if (fields.name.length < 2) error = "Le nom de la boutique doit faire au moins 2 caractères.";
   else if (fields.slug.length < 3) error = "L'adresse de la boutique doit faire au moins 3 caractères.";
+  else if (isReservedSlug(fields.slug)) error = "Cette adresse est réservée par OneShop. Choisissez-en une autre.";
   else if (!country) error = "Choisissez votre pays.";
   else if (!fields.city) error = "Indiquez votre ville.";
   else if (phoneDigits.length < 8) error = "Ce numéro de téléphone est trop court.";

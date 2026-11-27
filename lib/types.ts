@@ -12,6 +12,8 @@ export type Shop = {
   email: string | null;
   description: string | null;
   default_delivery_fee: number;
+  /** Thème brut tel qu'enregistré : toujours le passer par normalizeTheme (lib/theme/schema.ts). */
+  theme: unknown;
   created_at: string;
 };
 
@@ -41,6 +43,8 @@ export type Product = {
   name: string;
   description: string | null;
   price: number;
+  /** Prix « avant », barré à côté du prix de vente. */
+  compare_at_price: number | null;
   stock: number;
   image_path: string | null;
   is_active: boolean;
@@ -86,7 +90,10 @@ export type StorefrontShop = Pick<
   "id" | "name" | "slug" | "description" | "city" | "country" | "currency" | "phone" | "email" | "default_delivery_fee"
 >;
 
-export type StorefrontProduct = Pick<Product, "id" | "name" | "description" | "price" | "stock" | "image_path">;
+export type StorefrontProduct = Pick<
+  Product,
+  "id" | "name" | "description" | "price" | "compare_at_price" | "stock" | "image_path"
+>;
 
 /** État renvoyé par les Server Actions aux formulaires. */
 export type FormState = {

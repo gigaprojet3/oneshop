@@ -6,9 +6,11 @@ import { ExternalIcon, LogoutIcon } from "@/components/icons";
 import { Skeleton } from "@/components/ui";
 import { signOut } from "@/lib/actions/auth";
 import { daysLeft } from "@/lib/billing/subscriptions";
+import { requestTime } from "@/lib/clock";
 import { getBillingContext } from "@/lib/dal";
 import { findPlan } from "@/lib/domain";
 import { NavLinks, NavList } from "./nav";
+import { storeUrl } from "@/lib/store-url";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
@@ -84,7 +86,7 @@ async function ShopIdentity() {
         </p>
       </div>
       <Link
-        href={`/boutique/${shop.slug}`}
+        href={storeUrl(shop.slug)}
         target="_blank"
         className="flex items-center justify-between gap-2 border-t border-line px-3 py-2 text-sm font-semibold text-baobab-700 hover:bg-baobab-50"
       >
@@ -101,7 +103,7 @@ async function TrialBanner() {
   const plan = findPlan(subscription.plan);
 
   if (subscription.status === "trialing" && subscription.trial_ends_at) {
-    const days = daysLeft(subscription.trial_ends_at);
+    const days = daysLeft(subscription.trial_ends_at, await requestTime());
     return (
       <div className="border-b border-karite-400/40 bg-karite-50 px-4 py-2.5 text-sm text-karite-700 sm:px-8 print:hidden">
         <span className="font-semibold">

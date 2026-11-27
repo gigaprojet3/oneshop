@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BoxIcon, CardIcon, HomeIcon, ReceiptIcon, StoreIcon } from "@/components/icons";
+import { BoxIcon, BrushIcon, CardIcon, HomeIcon, ReceiptIcon, StoreIcon } from "@/components/icons";
 
 export const NAV = [
   { href: "/dashboard", label: "Accueil", icon: HomeIcon },
   { href: "/dashboard/commandes", label: "Commandes", icon: ReceiptIcon },
   { href: "/dashboard/produits", label: "Produits", icon: BoxIcon },
+  { href: "/dashboard/apparence", label: "Apparence", icon: BrushIcon },
   { href: "/dashboard/parametres", label: "Boutique", icon: StoreIcon },
   { href: "/dashboard/abonnement", label: "Abonnement", icon: CardIcon },
 ] as const;

@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { ROOT_DOMAIN, slugFromHost, storeUrl } from "@/lib/store-url";
 import { isSupabaseConfigured, supabaseKey, supabaseUrl } from "@/lib/supabase/env";
 
 const PROTECTED = ["/dashboard", "/onboarding"];
@@ -10,11 +11,37 @@ function matches(pathname: string, prefixes: string[]) {
 }
 
 /**
+ * Sous-domaine d'une boutique (chez-awa.oneshop.com/panier) : la requête est servie par
+ * app/boutique/chez-awa/panier, sans changer l'adresse affichée. Pas de session à rafraîchir :
+ * les clients d'une boutique ne se connectent pas.
+ *
+ * Site principal : les anciens liens /boutique/chez-awa/... sont redirigés vers le sous-domaine.
+ */
+function routeStorefront(request: NextRequest) {
+  if (!ROOT_DOMAIN) return null;
+  const { pathname, search } = request.nextUrl;
+
+  const slug = slugFromHost(request.headers.get("host"));
+  if (slug) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/boutique/${slug}${pathname === "/" ? "" : pathname}`;
+    return NextResponse.rewrite(url);
+  }
+
+  const old = /^\/boutique\/([a-z0-9-]+)(\/.*)?$/.exec(pathname);
+  if (old) return NextResponse.redirect(storeUrl(old[1], (old[2] ?? "") + search), 308);
+
+  return null;
+}
+
+/**
  * Rafraîchit la session Supabase à chaque requête et fait les redirections
  * « optimistes ». L'autorisation réelle est revérifiée côté serveur (lib/dal.ts)
  * et par les règles RLS de la base.
  */
 export async function proxy(request: NextRequest) {
+  const storefront = routeStorefront(request);
+  if (storefront) return storefront;
   if (!isSupabaseConfigured) return NextResponse.next();
 
   let response = NextResponse.next({ request });

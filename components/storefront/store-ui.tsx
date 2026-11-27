@@ -5,12 +5,13 @@ import { useEffect, useState } from "react";
 import { CartIcon } from "@/components/icons";
 import { Button } from "@/components/ui";
 import { useCart } from "@/lib/cart";
+import { storePath } from "@/lib/store-url";
 
 export function CartLink({ slug }: { slug: string }) {
   const { count } = useCart(slug);
   return (
     <Link
-      href={`/boutique/${slug}/panier`}
+      href={storePath(slug, "/panier")}
       className="relative inline-flex h-10 items-center gap-2 rounded-full px-3 font-semibold text-ink hover:bg-paper"
       aria-label={`Panier, ${count} article${count > 1 ? "s" : ""}`}
     >
@@ -84,7 +85,7 @@ export function AddToCart({ slug, productId, stock }: { slug: string; productId:
       {added ? (
         <p role="status" className="text-sm text-baobab-700">
           Ajouté au panier.{" "}
-          <Link href={`/boutique/${slug}/panier`} className="font-semibold underline underline-offset-4">
+          <Link href={storePath(slug, "/panier")} className="font-semibold underline underline-offset-4">
             Voir le panier
           </Link>
         </p>

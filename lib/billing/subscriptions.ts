@@ -1,5 +1,6 @@
 import "server-only";
 import { findPlan, TRIAL_DAYS, TRIAL_PLAN, type PlanId } from "@/lib/domain";
+import { requestTime } from "@/lib/clock";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Subscription } from "@/lib/types";
 import type { ValidCard } from "./card";
@@ -22,7 +23,7 @@ export function hasAccess(sub: Subscription | null) {
   return sub !== null && (sub.status === "trialing" || sub.status === "active");
 }
 
-export function daysLeft(iso: string, now = Date.now()) {
+export function daysLeft(iso: string, now: number) {
   return Math.max(0, Math.ceil((new Date(iso).getTime() - now) / DAY));
 }
 
@@ -66,7 +67,7 @@ export async function startTrial(shopId: string, card: ValidCard): Promise<{ err
  * Avec un vrai prestataire, ce travail est fait par les webhooks ; ici il est fait à la lecture.
  */
 export async function syncSubscription(sub: Subscription): Promise<Subscription> {
-  const now = Date.now();
+  const now = await requestTime();
   if (sub.status !== "trialing" && sub.status !== "active") return sub;
 
   let periodEnd = new Date(sub.current_period_end);

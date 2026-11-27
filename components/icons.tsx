@@ -128,3 +128,10 @@ export const MenuIcon = (p: IconProps) => (
     <path d="M4 7h16M4 12h16M4 17h16" />
   </Icon>
 );
+export const BrushIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M14.5 4.5 19.5 9.5 11 18H6v-5z" />
+    <path d="m12.5 6.5 5 5" />
+    <path d="M6 18c-1.5 0-2.5 1-2.5 2.5H6" />
+  </Icon>
+);

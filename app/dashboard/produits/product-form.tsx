@@ -64,6 +64,20 @@ export function ProductForm({
               <span className="flex items-center bg-paper px-3 text-sm font-semibold text-ink-faint">FCFA</span>
             </div>
           </Field>
+          <Field label="Prix barré" htmlFor="compare_at_price" hint="Facultatif. L'ancien prix, affiché barré avec le pourcentage de remise.">
+            <div className="flex items-stretch overflow-hidden rounded-control border border-line-strong focus-within:border-baobab-500 focus-within:ring-3 focus-within:ring-baobab-100">
+              <input
+                id="compare_at_price"
+                name="compare_at_price"
+                inputMode="numeric"
+                pattern="[0-9 ]*"
+                placeholder="15000"
+                className="tabular h-11 min-w-0 flex-1 bg-surface px-3.5 text-[0.95rem] focus:outline-none"
+                defaultValue={values?.compare_at_price ?? (product?.compare_at_price ? String(product.compare_at_price) : "")}
+              />
+              <span className="flex items-center bg-paper px-3 text-sm font-semibold text-ink-faint">FCFA</span>
+            </div>
+          </Field>
           <Field label="Quantité en stock" htmlFor="stock" hint="Elle baisse à chaque commande enregistrée.">
             <Input
               id="stock"

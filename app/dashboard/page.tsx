@@ -7,6 +7,7 @@ import { Panel, Skeleton, STATUS_TONE, buttonClass } from "@/components/ui";
 import { getCurrentShop, lowStockProducts, recentOrderStats } from "@/lib/dal";
 import { PIPELINE, STATUS_HINT, STATUS_LABEL, countryTimeZone, type OrderStatus } from "@/lib/domain";
 import { dateTime, fcfa, number, orderRef } from "@/lib/format";
+import { storeUrl } from "@/lib/store-url";
 
 export const metadata: Metadata = { title: "Accueil" };
 
@@ -51,7 +52,7 @@ async function Overview() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href={`/boutique/${shop.slug}`} target="_blank" className={buttonClass("secondary")}>
+          <Link href={storeUrl(shop.slug)} target="_blank" className={buttonClass("secondary")}>
             <ExternalIcon className="size-4" />
             Voir ma boutique
           </Link>

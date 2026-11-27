@@ -5,12 +5,17 @@ import { SubmitButton } from "@/components/form-bits";
 import { Alert, Field, Input, Select, Textarea } from "@/components/ui";
 import { COUNTRIES, findCountry } from "@/lib/domain";
 import { slugify } from "@/lib/format";
+import { ROOT_DOMAIN } from "@/lib/store-url";
 import type { FormState, Shop } from "@/lib/types";
 
 type Action = (prev: FormState, form: FormData) => Promise<FormState>;
 
-// Ex. « oneshop.com/boutique/ » : l'adresse publique de la boutique
-const STORE_PREFIX = `${(process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/^https?:\/\//, "")}/boutique/`;
+// L'adresse publique de la boutique, autour du champ : « chez-awa » + « .oneshop.com »,
+// ou « oneshop.com/boutique/ » + « chez-awa » sans sous-domaines.
+const STORE_PREFIX = ROOT_DOMAIN
+  ? null
+  : `${(process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/^https?:\/\//, "")}/boutique/`;
+const STORE_SUFFIX = ROOT_DOMAIN ? `.${ROOT_DOMAIN}` : null;
 
 export function ShopForm({
   action,
@@ -58,20 +63,25 @@ export function ShopForm({
         hint="Lettres, chiffres et tirets. C'est le lien de votre boutique en ligne."
       >
         <div className="flex items-stretch overflow-hidden rounded-control border border-line-strong focus-within:border-baobab-500 focus-within:ring-3 focus-within:ring-baobab-100">
-          <span className="flex items-center bg-paper px-3 text-[0.95rem] text-ink-faint">{STORE_PREFIX}</span>
+          {STORE_PREFIX ? (
+            <span className="flex items-center bg-paper px-3 text-[0.95rem] text-ink-faint">{STORE_PREFIX}</span>
+          ) : null}
           <input
             id="slug"
             name="slug"
             required
             minLength={3}
             maxLength={40}
-            className="h-11 min-w-0 flex-1 bg-surface px-2 text-[0.95rem] focus:outline-none"
+            className={`h-11 min-w-0 flex-1 bg-surface text-[0.95rem] focus:outline-none ${STORE_PREFIX ? "px-2" : "pl-3 pr-1 text-right"}`}
             value={slug}
             onChange={(e) => {
               setSlugEdited(true);
               setSlug(slugify(e.target.value));
             }}
           />
+          {STORE_SUFFIX ? (
+            <span className="flex items-center bg-paper px-3 text-[0.95rem] text-ink-faint">{STORE_SUFFIX}</span>
+          ) : null}
         </div>
       </Field>
 

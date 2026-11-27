@@ -7,6 +7,7 @@ import { updateCardAction } from "@/lib/actions/billing";
 import { BRAND_LABEL, type CardBrand } from "@/lib/billing/card";
 import { isSimulatedBilling } from "@/lib/billing/provider";
 import { daysLeft } from "@/lib/billing/subscriptions";
+import { requestTime } from "@/lib/clock";
 import { getBillingContext } from "@/lib/dal";
 import { PLANS, countryTimeZone, findPlan } from "@/lib/domain";
 import { fcfa } from "@/lib/format";
@@ -32,12 +33,12 @@ function longDate(iso: string, timeZone: string) {
   );
 }
 
-function statusLine(sub: Subscription, tz: string) {
+function statusLine(sub: Subscription, tz: string, now: number) {
   const plan = findPlan(sub.plan);
   const end = longDate(sub.current_period_end, tz);
   switch (sub.status) {
     case "trialing": {
-      const days = daysLeft(sub.trial_ends_at ?? sub.current_period_end);
+      const days = daysLeft(sub.trial_ends_at ?? sub.current_period_end, now);
       return sub.cancel_at_period_end
         ? `Essai gratuit jusqu'au ${end}. L'abonnement s'arrêtera ensuite, rien ne sera débité.`
         : `Essai gratuit, encore ${days} jour${days > 1 ? "s" : ""}. Premier débit de ${fcfa(plan.price)} le ${end}.`;
@@ -56,6 +57,7 @@ function statusLine(sub: Subscription, tz: string) {
 async function Billing() {
   const { shop, subscription: sub } = await getBillingContext();
   const tz = countryTimeZone(shop.country);
+  const now = await requestTime();
   const current = findPlan(sub.plan);
   const blocked = sub.status === "past_due" || sub.status === "canceled";
   const brand = (sub.card_brand ?? "inconnue") as CardBrand;
@@ -69,7 +71,7 @@ async function Billing() {
             {current.name} <span className="tabular text-lg font-medium text-ink-soft">{fcfa(current.price)} / mois</span>
           </p>
           <p className={`mt-2 max-w-[60ch] ${blocked ? "font-semibold text-kola-700" : "text-ink-soft"}`}>
-            {statusLine(sub, tz)}
+            {statusLine(sub, tz, now)}
           </p>
         </div>
         {!blocked ? (
