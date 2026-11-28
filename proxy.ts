@@ -21,7 +21,10 @@ function routeStorefront(request: NextRequest) {
   if (!ROOT_DOMAIN) return null;
   const { pathname, search } = request.nextUrl;
 
-  const slug = slugFromHost(request.headers.get("host"));
+  // Après une Server Action, Next.js rend la page de destination par une requête interne vers sa propre
+  // adresse : l'hôte d'origine (le sous-domaine) n'y figure plus que dans x-forwarded-host.
+  const host = request.headers.get("x-forwarded-host")?.split(",")[0].trim() || request.headers.get("host");
+  const slug = slugFromHost(host);
   if (slug) {
     const url = request.nextUrl.clone();
     url.pathname = `/boutique/${slug}${pathname === "/" ? "" : pathname}`;

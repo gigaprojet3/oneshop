@@ -227,7 +227,7 @@ function Hero({ s, ctx }: { s: Section["settings"]; ctx: StoreContext }) {
             alt={product?.name ?? ctx.shop.name}
             sizes="(min-width: 768px) 45vw, 100vw"
             priority
-            className="s-arch order-1 aspect-[4/5] w-full @3xl:order-2"
+            className="s-arch order-1 mx-auto aspect-[4/5] w-[72%] @xl:w-[60%] @3xl:order-2 @3xl:w-full"
           />
         </div>
       </section>

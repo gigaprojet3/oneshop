@@ -1,5 +1,6 @@
 import "server-only";
 import { createServerClient } from "@supabase/ssr";
+import { io } from "next/cache";
 import { cookies } from "next/headers";
 import { isSupabaseConfigured, supabaseKey, supabaseUrl } from "./env";
 
@@ -7,6 +8,9 @@ export async function createClient() {
   // Lire les cookies d'abord : cela marque l'appel comme dynamique (exécuté à la requête,
   // jamais pendant le build), y compris quand Supabase n'est pas encore configuré.
   const cookieStore = await cookies();
+  // Le préchargement partiel peut pré-rendre ce qui dépend des cookies ; or le client Supabase lit
+  // l'heure (Date.now) pour vérifier l'expiration de la session : io() repousse la suite à la requête.
+  await io();
   if (!isSupabaseConfigured) {
     throw new Error(
       "Supabase n'est pas configuré : renseignez NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY dans .env.local",
